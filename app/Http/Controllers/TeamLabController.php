@@ -7,6 +7,7 @@ use App\Models\Gameweek;
 use App\Models\LeagueEntry;
 use App\Models\Player;
 use App\Models\TransferPlan;
+use App\Services\CaptaincyAdvisor;
 use App\Services\TransferAdvisor;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -62,6 +63,25 @@ class TeamLabController extends Controller
         $gameweek = Gameweek::where('is_current', true)->value('number') ?? 1;
 
         return Inertia::render('TeamLab/Player', ['player' => $advisor->profile($player, $gameweek)]);
+    }
+
+    public function captaincy(Request $request, CaptaincyAdvisor $advisor)
+    {
+        $entry = LeagueEntry::where('id', $request->user()->fpl_entry_id)->firstOrFail();
+        $snapshot = EntryGameweek::where('league_entry_id', $entry->id)->latest('gameweek_id')->firstOrFail();
+        $plan = $request->integer('plan')
+            ? TransferPlan::where('user_id', $request->user()->id)->find($request->integer('plan'))
+            : null;
+        $ids = collect($plan?->squad ?? collect($snapshot->picks)->pluck('element'));
+        $squad = Player::whereIn('id', $ids)->get();
+        $gameweek = Gameweek::where('is_current', true)->first() ?? Gameweek::orderBy('number')->firstOrFail();
+
+        return Inertia::render('TeamLab/Captaincy', [
+            'entry' => $entry,
+            'current' => $gameweek,
+            'analysis' => $advisor->analyse($squad, $gameweek->number),
+            'plan' => $plan,
+        ]);
     }
 
     public function link(Request $request)

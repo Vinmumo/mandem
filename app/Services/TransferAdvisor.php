@@ -35,11 +35,12 @@ class TransferAdvisor
         $averageDifficulty = round($fixtures->avg('difficulty') ?: 3, 1);
         $form = (float) ($meta['form'] ?? 0);
         $pointsPerGame = (float) ($meta['points_per_game'] ?? 0);
+        $expectedNext = (float) ($meta['ep_next'] ?? 0);
         $minutes = (int) ($meta['minutes'] ?? 0);
         $chance = $meta['chance_of_playing_next_round'] ?? 100;
         $fixtureScore = max(0, 6 - $averageDifficulty);
         $reliability = min(5, $minutes / 180);
-        $score = round(($form * 2.2) + ($pointsPerGame * 1.7) + ($fixtureScore * 1.5) + $reliability, 1);
+        $score = round(($form * 2.2) + ($pointsPerGame * 1.7) + ($expectedNext * 2) + ($fixtureScore * 1.5) + $reliability, 1);
 
         $reasons = [];
         if ($averageDifficulty <= 2.5) {
@@ -50,6 +51,9 @@ class TransferAdvisor
         }
         if ($minutes >= 270) {
             $reasons[] = 'Reliable recent minutes';
+        }
+        if ($expectedNext >= 4.5) {
+            $reasons[] = 'Strong next-gameweek projection';
         }
         if ((float) ($meta['selected_by_percent'] ?? 100) < 10) {
             $reasons[] = 'Useful ownership differential';
@@ -73,6 +77,7 @@ class TransferAdvisor
             'form' => $form,
             'points' => $player->total_points,
             'points_per_game' => $pointsPerGame,
+            'expected_next' => $expectedNext,
             'ownership' => (float) ($meta['selected_by_percent'] ?? 0),
             'status' => $meta['status'] ?? 'a',
             'chance' => $chance,

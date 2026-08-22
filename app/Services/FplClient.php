@@ -48,6 +48,11 @@ class FplClient
         return $this->http()->get("/entry/$id/history/")->throw()->json();
     }
 
+    public function transfers(int $id): array
+    {
+        return $this->http()->get("/entry/$id/transfers/")->throw()->json();
+    }
+
     public function live(int $gw): array
     {
         return $this->http()->get("/event/$gw/live/")->throw()->json();

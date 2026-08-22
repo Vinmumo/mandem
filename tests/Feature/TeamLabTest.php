@@ -45,6 +45,7 @@ class TeamLabTest extends TestCase
         ]);
 
         $this->actingAs($user)->get('/team-lab')->assertOk();
+        $this->actingAs($user)->get('/team-lab/captaincy')->assertOk();
         $this->actingAs($user)->post('/team-lab/plans', [
             'name' => 'GW2 attack', 'squad' => $players->pluck('id')->all(),
             'bank' => 10, 'free_transfers' => 2,

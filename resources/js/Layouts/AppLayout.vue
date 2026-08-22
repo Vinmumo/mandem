@@ -1,7 +1,7 @@
 <script setup>
 import { Link, router, usePage } from '@inertiajs/vue3'; import { computed, ref } from 'vue';
 const page=usePage(), open=ref(false), dark=ref(document.documentElement.classList.contains('dark'));
-const nav=[['Dashboard','/'],['Live','/live'],['Team Lab','/team-lab'],['Standings','/standings'],['Managers','/managers'],['Insights','/stats'],['Hall','/hall-of-fame']];
+const nav=[['Dashboard','/'],['Live','/live'],['Team Lab','/team-lab'],['Rivals','/rivalries'],['Cups','/competitions'],['Standings','/standings'],['More','/stats']];
 const toggle=()=>{dark.value=!dark.value;document.documentElement.classList.toggle('dark',dark.value);localStorage.theme=dark.value?'dark':'light'};
 const initials=computed(()=>page.props.auth.user?.name?.split(' ').map(v=>v[0]).join('').slice(0,2).toUpperCase());
 </script>
