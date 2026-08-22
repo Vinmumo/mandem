@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\{AuthController, DashboardController};
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TeamLabController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -13,6 +15,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/standings', [DashboardController::class, 'standings'])->name('standings');
     Route::get('/live', [DashboardController::class, 'live'])->name('live');
+    Route::get('/team-lab', [TeamLabController::class, 'index'])->name('team-lab');
+    Route::post('/team-lab/link', [TeamLabController::class, 'link'])->name('team-lab.link');
+    Route::post('/team-lab/plans', [TeamLabController::class, 'savePlan'])->name('team-lab.plans');
+    Route::get('/players/{player}', [TeamLabController::class, 'player'])->name('players.show');
     Route::get('/managers', [DashboardController::class, 'managers'])->name('managers');
     Route::get('/managers/{entry}', [DashboardController::class, 'manager'])->name('managers.show');
     Route::get('/stats', [DashboardController::class, 'stats'])->name('stats');
